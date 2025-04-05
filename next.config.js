@@ -5,7 +5,20 @@ const nextConfig = {
   images: {
     unoptimized: true
   },
-  trailingSlash: true
+  trailingSlash: true,
+  
+  // Aşağıdaki ayarı ekleyin
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
+  
+  // Eğer App Router'da dinamik route'lar kullanıyorsanız
+  generateStaticParams: async () => {
+    return {
+      // Dinamik route'larınızı burada belirtin
+      '/': { page: '/' },
+    };
+  }
 }
 
-module.exports = nextConfig
+module.exports = nextConfig;
