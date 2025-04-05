@@ -14,16 +14,17 @@ Excel ve diğer tablo formatları arasında dönüşüm yapmanızı sağlayan ba
 - Sürükle-bırak dosya yükleme
 - Önizleme özelliği
 - Mobil uyumlu tasarım
+- Modern ve erişilebilir kullanıcı arayüzü
 
 ## Teknolojiler
 
-- [Next.js](https://nextjs.org/)
-- [React](https://reactjs.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Radix UI](https://www.radix-ui.com/)
-- [XLSX](https://www.npmjs.com/package/xlsx)
-- [jsPDF](https://www.npmjs.com/package/jspdf)
-- [Papa Parse](https://www.npmjs.com/package/papaparse)
+- [Next.js](https://nextjs.org/) - React framework
+- [React](https://reactjs.org/) - UI kütüphanesi
+- [Tailwind CSS](https://tailwindcss.com/) - CSS framework
+- [Shadcn UI](https://ui.shadcn.com/) - Yeniden kullanılabilir bileşenler
+- [XLSX](https://www.npmjs.com/package/xlsx) - Excel dosyası işleme
+- [jsPDF](https://www.npmjs.com/package/jspdf) - PDF oluşturma
+- [Papa Parse](https://www.npmjs.com/package/papaparse) - CSV işleme
 
 ## Geliştirme
 
@@ -36,8 +37,8 @@ Excel ve diğer tablo formatları arasında dönüşüm yapmanızı sağlayan ba
 
 1. Projeyi klonlayın:
 ```bash
-git clone https://github.com/kullaniciadi/excel-converter-app.git
-cd excel-converter-app
+git clone https://github.com/bugrabasbostanci/table-converter.git
+cd table-converter
 ```
 
 2. Bağımlılıkları yükleyin:
