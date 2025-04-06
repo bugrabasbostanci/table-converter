@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/use-toast"
-import { Sheet } from "lucide-react"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Copy } from "lucide-react"
 
 export const XLSXPreview = ({ tableData }) => {
   const [isLoading, setIsLoading] = useState(false)
@@ -15,56 +16,66 @@ export const XLSXPreview = ({ tableData }) => {
     })
   }
 
+  const handleCopy = async () => {
+    try {
+      const text = tableData.map(row => row.join('\t')).join('\n')
+      await navigator.clipboard.writeText(text)
+      toast({
+        title: "Başarılı",
+        description: "Tablo kopyalandı!",
+      })
+    } catch (error) {
+      console.error('Kopyalama hatası:', error)
+      toast({
+        title: "Hata",
+        description: "Tablo kopyalanırken bir hata oluştu.",
+        variant: "destructive",
+      })
+    }
+  }
+
   return (
-    <div className="w-full bg-white p-6 rounded-lg shadow-sm">
+    <div className="space-y-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Excel Önizleme</h3>
-        <Button
-          onClick={handleGoogleSheetsExport}
-          variant="outline"
-          className="flex items-center gap-2"
-        >
-          <Sheet className="w-4 h-4" />
-          Google Sheets'e Aktar
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleCopy}
+            className="flex items-center gap-2"
+          >
+            <Copy className="w-4 h-4" />
+            Kopyala
+          </Button>
+          <Button
+            onClick={handleGoogleSheetsExport}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            Google Sheets'e Aktar
+          </Button>
+        </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          {/* Excel benzeri başlık */}
-          <thead className="bg-[#E8E8E8]">
-            <tr>
-              {/* Excel sütun başlıkları (A, B, C...) */}
-              <th className="w-10 px-3 py-2 text-left text-xs font-medium text-gray-500 border-r border-gray-300"></th>
-              {tableData[0]?.map((_, index) => (
-                <th key={index} className="px-3 py-2 text-left text-xs font-medium text-gray-500 border-r border-gray-300">
-                  {String.fromCharCode(65 + index)}
-                </th>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {tableData[0].map((cell, index) => (
+                <TableHead key={index}>{cell}</TableHead>
               ))}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {/* Başlık satırı */}
-            <tr className="bg-[#F8F9FA]">
-              <td className="px-3 py-2 text-xs text-gray-500 border-r border-gray-300">1</td>
-              {tableData[0]?.map((header, index) => (
-                <td key={index} className="px-3 py-2 whitespace-nowrap text-sm font-medium text-gray-900 border-r border-gray-300">
-                  {header}
-                </td>
-              ))}
-            </tr>
-            {/* Veri satırları */}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {tableData.slice(1).map((row, rowIndex) => (
-              <tr key={rowIndex} className="hover:bg-gray-50">
-                <td className="px-3 py-2 text-xs text-gray-500 border-r border-gray-300">{rowIndex + 2}</td>
+              <TableRow key={rowIndex}>
                 {row.map((cell, cellIndex) => (
-                  <td key={cellIndex} className="px-3 py-2 whitespace-nowrap text-sm text-gray-500 border-r border-gray-300">
-                    {cell}
-                  </td>
+                  <TableCell key={cellIndex}>{cell}</TableCell>
                 ))}
-              </tr>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       {/* Excel benzeri alt bilgi */}
       <div className="mt-2 flex items-center justify-between text-xs text-gray-500 border-t border-gray-200 pt-2">

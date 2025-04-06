@@ -2,10 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { marked } from 'marked'
+import { Button } from "@/components/ui/button"
+import { Copy, Check } from "lucide-react"
+import { copyToClipboard } from '@/lib/utils'
+import { toast } from "@/components/ui/use-toast"
 
 const MarkdownPreview = ({ tableData }) => {
   const [mdContent, setMdContent] = useState('')
   const [htmlContent, setHtmlContent] = useState('')
+  const [isCopied, setIsCopied] = useState(false)
 
   useEffect(() => {
     if (!tableData || !tableData.length) return
@@ -88,31 +93,72 @@ const MarkdownPreview = ({ tableData }) => {
     }
   }, [tableData])
 
+  const handleCopy = async () => {
+    const success = await copyToClipboard(mdContent)
+    if (success) {
+      setIsCopied(true)
+      toast({
+        title: "Başarılı",
+        description: "Markdown içeriği panoya kopyalandı.",
+      })
+      setTimeout(() => setIsCopied(false), 2000)
+    } else {
+      toast({
+        title: "Hata",
+        description: "Kopyalama işlemi başarısız oldu.",
+        variant: "destructive",
+      })
+    }
+  }
+
   return (
-    <div className="w-full grid grid-cols-2 gap-6 bg-white p-6 rounded-lg shadow-sm">
-      <div className="markdown-source">
-        <div className="text-sm font-medium mb-3 text-gray-500 flex items-center gap-2">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-          </svg>
-          Markdown Kaynak
-        </div>
-        <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap font-mono text-sm border border-gray-200 h-[600px]">
-          {mdContent}
-        </pre>
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">Markdown Önizleme</h3>
+        <Button
+          onClick={handleCopy}
+          variant="outline"
+          size="sm"
+          className="flex items-center gap-2"
+        >
+          {isCopied ? (
+            <>
+              <Check className="w-4 h-4" />
+              Kopyalandı
+            </>
+          ) : (
+            <>
+              <Copy className="w-4 h-4" />
+              Kopyala
+            </>
+          )}
+        </Button>
       </div>
-      <div className="markdown-preview">
-        <div className="text-sm font-medium mb-3 text-gray-500 flex items-center gap-2">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-          HTML Önizleme
+      <div className="w-full grid grid-cols-2 gap-6 bg-white p-6 rounded-lg shadow-sm">
+        <div className="markdown-source">
+          <div className="text-sm font-medium mb-3 text-gray-500 flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+            </svg>
+            Markdown Kaynak
+          </div>
+          <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto whitespace-pre-wrap font-mono text-sm border border-gray-200 h-[600px]">
+            {mdContent}
+          </pre>
         </div>
-        <div 
-          className="prose max-w-none bg-gray-50 p-4 rounded-lg border border-gray-200 overflow-auto h-[600px]"
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
-        />
+        <div className="markdown-preview">
+          <div className="text-sm font-medium mb-3 text-gray-500 flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            HTML Önizleme
+          </div>
+          <div 
+            className="prose max-w-none bg-gray-50 p-4 rounded-lg border border-gray-200 overflow-auto h-[600px]"
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
+        </div>
       </div>
     </div>
   )

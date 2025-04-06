@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Download, Eye, Edit } from "lucide-react"
+import { Download, Eye, Edit, BookOpen } from "lucide-react"
 import { toast } from "@/components/ui/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -16,6 +16,9 @@ import CSVPreview from '@/components/ui/preview/CSVPreview'
 import JSONPreview from '@/components/ui/preview/JSONPreview'
 import MarkdownPreview from '@/components/ui/preview/MarkdownPreview'
 import { XLSXPreview } from '@/components/ui/preview/XLSXPreview'
+import { FeedbackForm } from '@/components/features/feedback/feedback-form'
+import { UsageGuide } from '@/components/features/guide/usage-guide'
+import { Toaster as HotToaster } from 'react-hot-toast'
 
 export default function Page() {
   const [inputText, setInputText] = useState("")
@@ -23,7 +26,6 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState("edit")
   const [isConverting, setIsConverting] = useState(false)
   const [tablePreview, setTablePreview] = useState([])
-  const [showTabHint, setShowTabHint] = useState(false)
 
   // Parse table data when input changes
   const handleTextChange = (text) => {
@@ -32,10 +34,8 @@ export default function Page() {
       const rows = text.trim().split("\n")
       const tableData = rows.map((row) => row.trim().split(/\s{2,}|\t/))
       setTablePreview(tableData)
-      setShowTabHint(true)
     } else {
       setTablePreview([])
-      setShowTabHint(false)
     }
   }
 
@@ -76,36 +76,39 @@ export default function Page() {
 
   return (
     <main className="container mx-auto p-4 min-h-screen">
+      <Toaster position="top-right" />
       <Card className="w-full">
         <CardHeader>
-          <div className="flex items-center gap-4">
-            <Logo className="w-12 h-12" />
-            <div>
-              <CardTitle>Tablo Dönüştürücü</CardTitle>
-              <CardDescription>
-                Tabloyu yapıştırın, formatı seçin ve dönüştürün.
-              </CardDescription>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8">
+                <Logo className="w-full h-full" />
+              </div>
+              <div>
+                <CardTitle>Table Convert</CardTitle>
+                <CardDescription>
+                  Web tablolarını tek tıkla kullanılabilir formatlara dönüştürün!
+                </CardDescription>
+              </div>
             </div>
+            <FeedbackForm />
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="edit" value={activeTab} onValueChange={setActiveTab}>
+          <Tabs defaultValue="edit" className="w-full">
             <div className="flex items-center justify-between mb-4">
               <TabsList>
-                <TabsTrigger value="edit" className="relative">
-                  <Edit className="w-4 h-4 mr-2" />
+                <TabsTrigger value="edit" className="flex items-center gap-2">
+                  <Edit className="w-4 h-4" />
                   Düzenle
-                  {showTabHint && (
-                    <div className="absolute -top-2 -right-2">
-                      <div className="animate-bounce bg-blue-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
-                        !
-                      </div>
-                    </div>
-                  )}
                 </TabsTrigger>
-                <TabsTrigger value="preview">
-                  <Eye className="w-4 h-4 mr-2" />
+                <TabsTrigger value="preview" className="flex items-center gap-2">
+                  <Eye className="w-4 h-4" />
                   Önizleme
+                </TabsTrigger>
+                <TabsTrigger value="guide" className="flex items-center gap-2">
+                  <BookOpen className="w-4 h-4" />
+                  Nasıl Kullanılır?
                 </TabsTrigger>
               </TabsList>
 
@@ -156,10 +159,13 @@ export default function Page() {
                 </div>
               )}
             </TabsContent>
+
+            <TabsContent value="guide" className="m-0">
+              <UsageGuide />
+            </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
-      <Toaster />
     </main>
   )
 }
